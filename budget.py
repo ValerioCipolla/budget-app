@@ -52,8 +52,23 @@ class Category:
 
 
 def create_spend_chart(categories):
+  total_spent = 0
+  for category in categories:
+    for entry in category.ledger:
+      if entry["amount"] < 0:
+        total_spent += entry["amount"] * -1
+  spending_dict = dict()
+  for category in categories:
+    spending_dict[category.category] = 0
+    for entry in category.ledger:
+      if entry["amount"] < 0:
+        spending_dict[category.category] += entry["amount"] * -1
+  percentages_spending = []
+  for v in spending_dict.values():
+    percentages_spending.append(int((v * 100) / total_spent))
   result = ""
-  result = "Percentage spent by category\n100|\n 90|\n 80|\n 70|\n 60|\n 50|\n 40|\n 30|\n 20|\n 10|\n  0|\n"
+  result += f"Percentage spent by category\n100|{add_o(percentages_spending, 100)}\n 90|{add_o(percentages_spending, 90)}\n 80|{add_o(percentages_spending, 80)}\n 70|{add_o(percentages_spending, 70)}\n 60|{add_o(percentages_spending, 60)}\n 50|{add_o(percentages_spending, 50)}\n 40|{add_o(percentages_spending, 40)}\n 30|{add_o(percentages_spending, 30)}\n 20|{add_o(percentages_spending, 20)}\n 10|{add_o(percentages_spending, 10)}\n  0|{add_o(percentages_spending, 0)}\n"
+  result += ""
   result += "    " + "---" * len(categories) + "-\n    "
   categories_max_length = max(list(map(lambda x: len(x.category),categories)))
   strings_to_add = list(map(lambda x: x.category.ljust(categories_max_length), categories))
@@ -65,17 +80,15 @@ def create_spend_chart(categories):
       string_index += 1
     result += " \n    "
     character_index += 1
+  result = result.rstrip() + "  "
+  return result
 
-  return result.rstrip()
-
-food = Category("Food")
-clothing = Category("Clothing")
-auto = Category("Auto")
-food.deposit(1000, "initial deposit")
-food.withdraw(10.15, "groceries")
-food.withdraw(15.89, "restaurant and more food")
-food.transfer(50, clothing)
-
-print(food)
-print(clothing)
-print(create_spend_chart([food, clothing, auto]))
+def add_o(percentages_list, ceiling):
+  result = ""
+  for percentage in percentages_list:
+    if percentage < ceiling:
+      result += "   "
+    else:
+      result += " o "
+  result += " "
+  return result
