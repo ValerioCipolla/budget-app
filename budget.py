@@ -9,10 +9,11 @@ class Category:
 
   def withdraw(self, amount, description=""):
     if self.check_funds(amount):
-      return False
-    else:
       self.ledger.append({"amount": (amount * -1), "description": description})
       return True
+    else:
+      return False
+      
 
   def get_balance(self):
     current_balance = 0
@@ -34,6 +35,19 @@ class Category:
     else:
       return False
 
+  def __str__(self):
+    result = self.category.center(30, "*")
+    for entry in self.ledger:
+      result += "\n"
+      result += f"{entry['description'][0:23]:<23}"
+      result += f"{'{:.2f}'.format(entry['amount'])[0:7]:>7}"
+    total = 0
+    for entry in self.ledger:
+      total += entry["amount"]
+    result += "\n"
+    result += f"Total: {total}"
+    return result
+
 
 
 
@@ -43,9 +57,9 @@ def create_spend_chart(categories):
 food = Category("Food")
 clothing = Category("Clothing")
 food.deposit(1000, "initial deposit")
-food.transfer(2000, clothing)
-print(food.ledger)
-print(food.get_balance())
-print(clothing.get_balance())
-print(clothing.ledger)
-print(food.check_funds(4000))
+food.withdraw(10.15, "groceries")
+food.withdraw(15.89, "restaurant and more food")
+food.transfer(50, clothing)
+
+print(food)
+print(clothing)
