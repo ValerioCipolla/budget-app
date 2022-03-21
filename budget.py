@@ -52,10 +52,25 @@ class Category:
 
 
 def create_spend_chart(categories):
-  return 1
+  result = ""
+  result = "Percentage spent by category\n100|\n 90|\n 80|\n 70|\n 60|\n 50|\n 40|\n 30|\n 20|\n 10|\n  0|\n"
+  result += "    " + "---" * len(categories) + "-\n    "
+  categories_max_length = max(list(map(lambda x: len(x.category),categories)))
+  strings_to_add = list(map(lambda x: x.category.ljust(categories_max_length), categories))
+  character_index = 0
+  for n in range(categories_max_length):
+    string_index = 0
+    for m in range(len(categories)):
+      result += f" {strings_to_add[string_index][character_index]} "
+      string_index += 1
+    result += " \n    "
+    character_index += 1
+
+  return result.rstrip()
 
 food = Category("Food")
 clothing = Category("Clothing")
+auto = Category("Auto")
 food.deposit(1000, "initial deposit")
 food.withdraw(10.15, "groceries")
 food.withdraw(15.89, "restaurant and more food")
@@ -63,3 +78,4 @@ food.transfer(50, clothing)
 
 print(food)
 print(clothing)
+print(create_spend_chart([food, clothing, auto]))
